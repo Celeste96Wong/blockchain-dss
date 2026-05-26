@@ -230,3 +230,8 @@ python app.py
 
 # 4. 退出 venv
 deactivate
+
+# 5. 推上 GitHub
+git add .
+git commit -m "xx did what xx"
+git push
