@@ -766,10 +766,8 @@ async function runAssessment() {
   const apiKey = document.getElementById('api_key').value.trim();
 
   // Show loading
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('results').style.display = 'none';
-  setStep(3);
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('loading').style.display = 'block';
 
   const payload = {
     ratings: currentRatings,
