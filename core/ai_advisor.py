@@ -1,19 +1,19 @@
 """
-AI Advisor — uses OpenAI to generate plain-language blockchain adoption recommendations
-based on Fuzzy TOPSIS results.
+AI Advisor — calls OpenAI API directly via requests (no openai library needed)
+Avoids version conflicts on Vercel
 """
 
-from openai import OpenAI
 import json
+import os
+
+try:
+    import urllib.request as urlrequest
+except ImportError:
+    urlrequest = None
+
 
 def generate_recommendation(topsis_result: dict, business_context: dict) -> dict:
-    """
-    Generate AI-powered plain language recommendation.
-
-    topsis_result: output from run_fuzzy_topsis()
-    business_context: {industry, size, goal}
-    """
-    client = OpenAI(api_key=business_context.get("api_key", ""))
+    api_key = business_context.get("api_key", "").strip() or os.environ.get("OPENAI_API_KEY", "")
 
     score = topsis_result["readiness_score"]
     tier = topsis_result["tier"]
@@ -29,11 +29,11 @@ def generate_recommendation(topsis_result: dict, business_context: dict) -> dict
     system_prompt = """You are a friendly blockchain adoption advisor helping non-technical 
 small business owners understand whether blockchain is right for them.
 Your tone is warm, clear, jargon-free, and encouraging.
-You always explain WHY, not just WHAT.
+Always explain WHY, not just WHAT.
 Never use technical blockchain terms without immediately explaining them in plain language.
 Structure your response in clear sections."""
 
-    user_prompt = f"""A business owner has just completed a blockchain adoption readiness assessment.
+    user_prompt = f"""A business owner completed a blockchain adoption readiness assessment.
 
 Business Context:
 - Industry: {business_context.get('industry', 'General Business')}
@@ -52,32 +52,52 @@ Detailed Scores:
 Please provide a response with EXACTLY these 4 sections (use these exact headers):
 
 ## What This Means For You
-(2-3 sentences explaining their score in plain language, relating to their specific industry)
+(2-3 sentences explaining their score in plain language)
 
 ## Your Key Strengths
-(Explain the top 2 strengths and why they matter for blockchain adoption — no jargon)
+(Explain the top 2 strengths and why they matter)
 
 ## What To Work On First
-(Explain the 2 gaps and give 1 concrete, actionable step for each — like advice from a trusted friend)
+(Explain the 2 gaps with 1 concrete actionable step each)
 
 ## Our Recommendation
-(Based on their tier, give a clear YES/NOT YET/PREPARE FIRST recommendation with 3 specific next steps)
+(Clear YES/NOT YET/PREPARE FIRST recommendation with 3 next steps)
 
-Keep the entire response under 350 words. Be warm and encouraging, never discouraging."""
+Keep the entire response under 350 words. Be warm and encouraging."""
+
+    if not api_key:
+        return {
+            "success": False,
+            "error": "No API key provided",
+            "full_text": get_fallback_advice(topsis_result),
+            "sections": {},
+        }
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
+        payload = json.dumps({
+            "model": "gpt-4o-mini",
+            "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            max_tokens=600,
-            temperature=0.7,
-        )
-        advice_text = response.choices[0].message.content
+            "max_tokens": 600,
+            "temperature": 0.7,
+        }).encode("utf-8")
 
-        # Parse sections
+        req = urlrequest.Request(
+            "https://api.openai.com/v1/chat/completions",
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            },
+            method="POST"
+        )
+
+        with urlrequest.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+
+        advice_text = data["choices"][0]["message"]["content"]
         sections = parse_sections(advice_text)
 
         return {
@@ -96,7 +116,6 @@ Keep the entire response under 350 words. Be warm and encouraging, never discour
 
 
 def parse_sections(text: str) -> dict:
-    """Extract the 4 sections from AI response"""
     sections = {}
     current_section = None
     current_content = []
@@ -133,8 +152,8 @@ def get_fallback_advice(topsis_result: dict) -> str:
     score = topsis_result["readiness_score"]
 
     if tier == "high":
-        return f"Your readiness score of {score}/100 indicates strong potential for blockchain adoption. Your strengths in data integrity and multi-party trust align well with blockchain's core benefits. We recommend consulting a blockchain implementation specialist to begin your journey."
+        return f"Your readiness score of {score}/100 indicates strong potential for blockchain adoption. Your strengths align well with blockchain's core benefits. We recommend consulting a blockchain implementation specialist to begin your journey."
     elif tier == "medium":
         return f"Your readiness score of {score}/100 shows moderate potential. You have some foundations in place, but there are areas to strengthen before committing to full blockchain adoption. Focus on building technical readiness and securing budget allocation first."
     else:
-        return f"Your readiness score of {score}/100 suggests blockchain may not be the right fit right now. This isn't a setback — it's an opportunity to build the right foundations. Start by digitising your core processes and educating your team about blockchain basics."
+        return f"Your readiness score of {score}/100 suggests blockchain may not be the right fit right now. Start by digitising your core processes and educating your team about blockchain basics."
