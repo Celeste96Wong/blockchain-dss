@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlockchainReady — Is Blockchain Right For Your Business?</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0f1a;
+    --bg2:       #111827;
+    --bg3:       #1a2235;
+    --border:    rgba(255,255,255,0.07);
+    --accent:    #3b82f6;
+    --accent2:   #06b6d4;
+    --gold:      #f59e0b;
+    --green:     #22c55e;
+    --red:       #ef4444;
+    --text:      #f1f5f9;
+    --muted:     #94a3b8;
+    --radius:    16px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Animated background ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(59,130,246,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6,182,212,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* ── Header ── */
+  header {
+    padding: 48px 0 32px;
+    text-align: center;
+  }
+
+  .logo-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #93c5fd;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #f1f5f9 0%, #93c5fd 50%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  /* ── Step indicator ── */
+  .steps {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; margin: 40px 0 32px;
+  }
+
+  .step {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--muted);
+    font-weight: 500;
+  }
+
+  .step.active { color: var(--accent); }
+  .step.done { color: var(--green); }
+
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    transition: all 0.3s;
+  }
+
+  .step.done .step-num {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .step.active .step-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    box-shadow: 0 0 16px rgba(59,130,246,0.4);
+  }
+
+  .step-line {
+    width: 48px; height: 1.5px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+
+  /* ── Cards / Panels ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .card-desc { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
+  /* ── Context Form ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label { font-size: 13px; font-weight: 500; color: var(--muted); }
+
+  select, input[type="text"], input[type="password"] {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  select:focus, input:focus {
+    border-color: rgba(59,130,246,0.5);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+  }
+
+  select option { background: var(--bg2); }
+
+  .api-note {
+    font-size: 12px; color: var(--muted);
+    margin-top: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* ── Criterion Sliders ── */
+  .criterion-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .criterion-item:hover { border-color: rgba(59,130,246,0.2); }
+
+  .crit-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .crit-left { display: flex; align-items: flex-start; gap: 12px; flex: 1; }
+
+  .crit-icon {
+    font-size: 22px; line-height: 1;
+    margin-top: 2px; flex-shrink: 0;
+  }
+
+  .crit-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .crit-text p {
+    font-size: 13px; color: var(--muted); line-height: 1.4;
+  }
+
+  .crit-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    min-width: 28px; text-align: right;
+  }
+
+  .slider-row { display: flex; align-items: center; gap: 12px; }
+
+  .slider-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent) 60%, var(--border) 60%);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.25), 0 2px 8px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none; outline: none;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    box-shadow: 0 4px 24px rgba(59,130,246,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(59,130,246,0.4);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5; cursor: not-allowed; transform: none;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+  .btn-row {
+    display: flex; gap: 12px; justify-content: flex-end;
+    margin-top: 24px;
+  }
+
+  /* ── Results ── */
+  #results { display: none; }
+
+  .score-hero {
+    text-align: center;
+    padding: 48px 32px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(59,130,246,0.08) 0%, transparent 70%);
+  }
+
+  .score-ring {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .score-ring svg {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .score-ring-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px; font-weight: 800;
+    line-height: 1;
+    position: relative; z-index: 1;
+  }
+
+  .score-ring-label {
+    font-size: 11px; color: var(--muted);
+    position: relative; z-index: 1;
+    font-weight: 500;
+  }
+
+  .tier-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .score-tagline {
+    font-size: 15px; color: var(--muted);
+    max-width: 480px; margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── Bar chart ── */
+  .bars-grid { display: flex; flex-direction: column; gap: 10px; }
+
+  .bar-item { display: flex; align-items: center; gap: 12px; }
+
+  .bar-label {
+    font-size: 13px; color: var(--muted);
+    min-width: 160px; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .bar-track {
+    flex: 1; height: 8px;
+    background: var(--bg3);
+    border-radius: 4px; overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  .bar-score {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 600;
+    min-width: 42px; text-align: right;
+  }
+
+  /* ── AI Advice sections ── */
+  .advice-section {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+  }
+
+  .advice-section h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .advice-section p {
+    font-size: 14px; line-height: 1.7;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+  }
+
+  .advice-full {
+    font-size: 14px; line-height: 1.8;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+  }
+
+  /* ── Loading ── */
+  #loading {
+    display: none;
+    text-align: center; padding: 80px 32px;
+  }
+
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-size: 16px; color: var(--muted);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+  /* ── Sections ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── Misc ── */
+  .tech-note {
+    text-align: center; margin-top: 32px; padding-bottom: 48px;
+  }
+
+  .tech-note p {
+    font-size: 12px; color: rgba(148,163,184,0.5);
+    line-height: 1.6;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .highlight-box {
+    background: rgba(59,130,246,0.05);
+    border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 10px; padding: 16px;
+  }
+
+  .highlight-box h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--accent);
+    display: flex; gap: 6px; align-items: center;
+  }
+
+  .highlight-box ul { list-style: none; }
+  .highlight-box li {
+    font-size: 13px; color: var(--muted);
+    padding: 4px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .highlight-box li::before { content: '→'; color: var(--accent2); }
+
+  @media (max-width: 600px) {
+    .form-grid, .two-col { grid-template-columns: 1fr; }
+    .steps { flex-wrap: wrap; gap: 8px; }
+    .step-line { display: none; }
+    .card { padding: 20px; }
+    .crit-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <div class="logo-badge">⛓️ BlockchainReady · AI-Powered DSS</div>
+    <h1>Is Blockchain Right<br>For Your Business?</h1>
+    <p class="subtitle">
+      Answer 7 simple questions. Our AI uses Fuzzy MCDM to assess your readiness
+      and give you a personalised recommendation — no technical knowledge required.
+    </p>
+  </header>
+
+  <!-- Step Indicator -->
+  <div class="steps">
+    <div class="step active" id="step1-ind">
+      <div class="step-num">1</div>
+      <span>Your Business</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step2-ind">
+      <div class="step-num">2</div>
+      <span>Assessment</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step3-ind">
+      <div class="step-num">3</div>
+      <span>Results</span>
+    </div>
+  </div>
+
+  <!-- ── STEP 1: Business Context ── -->
+  <div class="section active" id="step1">
+    <div class="card">
+      <div class="card-title">🏢 Tell us about your business</div>
+      <p class="card-desc">This helps our AI tailor the recommendation to your specific situation.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Industry / Sector</label>
+          <select id="industry">
+            <option value="retail">Retail & E-commerce</option>
+            <option value="logistics">Logistics & Supply Chain</option>
+            <option value="finance">Finance & Accounting</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="manufacturing">Manufacturing</option>
+            <option value="education">Education</option>
+            <option value="food">Food & Agriculture</option>
+            <option value="property">Property & Real Estate</option>
+            <option value="tech">Technology & IT</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Company Size</label>
+          <select id="size">
+            <option value="micro">Micro (&lt;10 employees)</option>
+            <option value="small">Small (10–50 employees)</option>
+            <option value="medium">Medium (50–250 employees)</option>
+            <option value="large">Large (250+ employees)</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>Main Business Goal</label>
+          <select id="goal">
+            <option value="supply_chain">Improve supply chain transparency</option>
+            <option value="fraud">Reduce fraud and data tampering</option>
+            <option value="payments">Automate payments and contracts</option>
+            <option value="compliance">Meet regulatory compliance</option>
+            <option value="trust">Build customer trust</option>
+            <option value="efficiency">Improve operational efficiency</option>
+            <option value="explore">Just exploring options</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>OpenAI API Key (for AI recommendations)</label>
+          <input type="password" id="api_key" placeholder="sk-..." autocomplete="off">
+          <span class="api-note">🔒 Sent directly to OpenAI — never stored on our servers</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToStep2()">
+          Start Assessment →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: Criterion Sliders ── -->
+  <div class="section" id="step2">
+    <div class="card">
+      <div class="card-title">📊 Rate your business situation</div>
+      <p class="card-desc">
+        Move the slider to reflect your current business reality.
+        There are no right or wrong answers — be honest for the most accurate result.
+      </p>
+
+      <div id="criteria-list">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goToStep1()">← Back</button>
+        <button class="btn btn-primary" id="assess-btn" onclick="runAssessment()">
+          Analyse My Readiness ✦
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Loading ── -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p class="loading-text">Analysing your readiness with Fuzzy MCDM + AI...</p>
+  </div>
+
+  <!-- ── STEP 3: Results ── -->
+  <div class="section" id="step3">
+
+    <!-- Score Hero -->
+    <div class="score-hero">
+      <div class="score-ring" id="score-ring">
+        <svg viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+          <circle id="score-arc" cx="70" cy="70" r="58" fill="none"
+            stroke="url(#arcGrad)" stroke-width="10"
+            stroke-linecap="round" stroke-dasharray="364" stroke-dashoffset="364"/>
+          <defs>
+            <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#3b82f6"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="score-ring-num" id="score-num">0</span>
+        <span class="score-ring-label">/ 100</span>
+      </div>
+
+      <div class="tier-badge" id="tier-badge"></div>
+      <p class="score-tagline" id="score-tagline">Calculating your readiness...</p>
+    </div>
+
+    <!-- Criterion Bars -->
+    <div class="card">
+      <div class="card-title">📈 Score Breakdown</div>
+      <p class="card-desc">How each factor contributes to your readiness profile.</p>
+      <div class="bars-grid" id="bars-grid"></div>
+    </div>
+
+    <!-- Strengths & Gaps -->
+    <div class="two-col" id="strengths-gaps"></div>
+
+    <!-- AI Advice -->
+    <div class="card" id="ai-advice-card">
+      <div class="card-title">🤖 AI Advisor Recommendation</div>
+      <p class="card-desc">Personalised analysis powered by GPT-4o-mini based on your assessment.</p>
+      <div id="ai-advice-content"></div>
+    </div>
+
+    <!-- Technical Note -->
+    <div class="card">
+      <div class="card-title" style="font-size:14px;">⚙️ How This Works</div>
+      <p style="font-size:13px; color:var(--muted); line-height:1.7;">
+        Your answers are converted into <strong>Triangular Fuzzy Numbers (TFNs)</strong>
+        using a standard 1–9 linguistic scale. The system then applies
+        <strong>Fuzzy TOPSIS</strong> (Technique for Order of Preference by Similarity to Ideal Solution)
+        to compute a <strong>Closeness Coefficient (CC)</strong> representing your proximity
+        to the ideal blockchain-ready business profile.
+        Expert criterion weights were pre-calibrated using <strong>Fuzzy AHP</strong>
+        based on the TOE (Technology-Organisation-Environment) framework.
+        The AI layer uses <strong>GPT-4o-mini</strong> to translate the mathematical output
+        into plain-language recommendations.
+      </p>
+      <p style="font-size:12px; color:rgba(148,163,184,0.5); margin-top:12px;">
+        Closeness Coefficient: <span id="cc-value" style="font-family:monospace;">—</span> &nbsp;|&nbsp;
+        D+ (distance from ideal): <span id="dpos-value" style="font-family:monospace;">—</span> &nbsp;|&nbsp;
+        D- (distance from anti-ideal): <span id="dneg-value" style="font-family:monospace;">—</span>
+      </p>
+    </div>
+
+    <div class="btn-row" style="justify-content:center; margin-bottom:48px;">
+      <button class="btn btn-ghost" onclick="resetAll()">← Start Over</button>
+      <button class="btn btn-primary" onclick="window.print()">📄 Save Report</button>
+    </div>
+
+  </div><!-- /step3 -->
+
+  <div class="tech-note">
+    <p>BlockchainReady Prototype · Research Demo · Built with Fuzzy AHP + TOPSIS + GPT-4o-mini<br>
+    For academic research on Blockchain Adoption Decision Support Systems</p>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ── Criteria data (injected from Flask) ──
+const CRITERIA = {{ criteria | tojson }};
+
+// ── State ──
+let currentRatings = {};
+CRITERIA.forEach(c => { currentRatings[c.id] = 3; });
+
+// ── Build Step 2 sliders ──
+function buildSliders() {
+  const container = document.getElementById('criteria-list');
+  container.innerHTML = '';
+  CRITERIA.forEach((c, i) => {
+    const div = document.createElement('div');
+    div.className = 'criterion-item';
+    div.innerHTML = `
+      <div class="crit-header">
+        <div class="crit-left">
+          <div class="crit-icon">${c.icon}</div>
+          <div class="crit-text">
+            <h3>${c.label}</h3>
+            <p>${c.question}</p>
+            <p style="font-size:12px; margin-top:2px; opacity:0.6;">${c.description}</p>
+          </div>
+        </div>
+        <div class="crit-value" id="val-${c.id}">3</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Very Low</span>
+        <input type="range" min="1" max="5" value="3"
+          id="slider-${c.id}"
+          oninput="updateSlider('${c.id}', this.value)"
+        >
+        <span class="slider-label">Very High</span>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function updateSlider(id, val) {
+  currentRatings[id] = parseInt(val);
+  document.getElementById(`val-${id}`).textContent = val;
+
+  // Update gradient
+  const slider = document.getElementById(`slider-${id}`);
+  const pct = ((val - 1) / 4) * 100;
+  slider.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${pct}%, var(--border) ${pct}%)`;
+}
+
+// ── Navigation ──
+function goToStep1() {
+  showSection('step1');
+  setStep(1);
+}
+
+function goToStep2() {
+  buildSliders();
+  showSection('step2');
+  setStep(2);
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  document.getElementById('loading').style.display = 'none';
+}
+
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const ind = document.getElementById(`step${i}-ind`);
+    ind.classList.remove('active', 'done');
+    if (i < n) ind.classList.add('done');
+    if (i === n) ind.classList.add('active');
+  });
+}
+
+// ── Run Assessment ──
+async function runAssessment() {
+  const apiKey = document.getElementById('api_key').value.trim();
+
+  // Show loading
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  setStep(3);
+
+  const payload = {
+    ratings: currentRatings,
+    context: {
+      industry: document.getElementById('industry').value,
+      size: document.getElementById('size').value,
+      goal: document.getElementById('goal').value,
+      api_key: apiKey,
+    }
+  };
+
+  try {
+    const res = await fetch('/assess', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    displayResults(data);
+  } catch (err) {
+    document.getElementById('loading').style.display = 'none';
+    alert('Error running assessment. Please check your connection and try again.');
+    goToStep2();
+  }
+}
+
+// ── Display Results ──
+function displayResults(data) {
+  const t = data.topsis;
+  const ai = data.ai;
+
+  document.getElementById('loading').style.display = 'none';
+  showSection('step3');
+
+  // Score ring animation
+  const score = t.readiness_score;
+  const circumference = 364;
+  const arc = document.getElementById('score-arc');
+  const numEl = document.getElementById('score-num');
+
+  setTimeout(() => {
+    const offset = circumference - (score / 100) * circumference;
+    arc.style.strokeDashoffset = offset;
+    arc.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+
+    // Animate number
+    let current = 0;
+    const step = score / 60;
+    const timer = setInterval(() => {
+      current = Math.min(current + step, score);
+      numEl.textContent = Math.round(current);
+      if (current >= score) clearInterval(timer);
+    }, 16);
+  }, 100);
+
+  // Tier badge
+  const tierColors = { high: '#22c55e', medium: '#f59e0b', low: '#ef4444' };
+  const tierBg = { high: 'rgba(34,197,94,0.1)', medium: 'rgba(245,158,11,0.1)', low: 'rgba(239,68,68,0.1)' };
+  const tierBorder = { high: 'rgba(34,197,94,0.3)', medium: 'rgba(245,158,11,0.3)', low: 'rgba(239,68,68,0.3)' };
+  const badge = document.getElementById('tier-badge');
+  badge.style.color = tierColors[t.tier];
+  badge.style.background = tierBg[t.tier];
+  badge.style.border = `1px solid ${tierBorder[t.tier]}`;
+  badge.textContent = `${t.tier_emoji} ${t.tier_label}`;
+
+  // Tagline
+  const taglines = {
+    high: 'Your business shows strong alignment with blockchain adoption. Now is a good time to explore implementation.',
+    medium: 'You have some foundations in place. A few targeted improvements could unlock blockchain\'s full potential.',
+    low: 'Blockchain may not be the right fit right now — but the right preparation can change that.'
+  };
+  document.getElementById('score-tagline').textContent = taglines[t.tier];
+
+  // Criterion bars
+  const barsGrid = document.getElementById('bars-grid');
+  barsGrid.innerHTML = '';
+  t.criterion_scores.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'bar-item';
+    row.innerHTML = `
+      <span class="bar-label">${c.icon} ${c.label}</span>
+      <div class="bar-track">
+        <div class="bar-fill" data-score="${c.score}" style="width:0%"></div>
+      </div>
+      <span class="bar-score">${c.score}</span>
+    `;
+    barsGrid.appendChild(row);
+  });
+
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.score + '%';
+    });
+  }, 200);
+
+  // Strengths & Gaps
+  const sg = document.getElementById('strengths-gaps');
+  sg.innerHTML = `
+    <div class="highlight-box">
+      <h4>✅ Your Strengths</h4>
+      <ul>
+        ${t.strengths.map(s => `<li>${s.icon} ${s.label} (${s.score}/100)</li>`).join('')}
+      </ul>
+    </div>
+    <div class="highlight-box" style="border-color:rgba(239,68,68,0.15); background:rgba(239,68,68,0.04);">
+      <h4 style="color:#f87171;">⚠️ Areas to Improve</h4>
+      <ul>
+        ${t.gaps.map(g => `<li>${g.icon} ${g.label} (${g.score}/100)</li>`).join('')}
+      </ul>
+    </div>
+  `;
+
+  // Technical values
+  document.getElementById('cc-value').textContent = t.CC;
+  document.getElementById('dpos-value').textContent = t.D_pos;
+  document.getElementById('dneg-value').textContent = t.D_neg;
+
+  // AI Advice
+  const adviceContent = document.getElementById('ai-advice-content');
+  if (ai.success && ai.sections && Object.keys(ai.sections).length > 0) {
+    const sectionConfig = [
+      { key: 'meaning', icon: '💡', title: 'What This Means For You' },
+      { key: 'strengths', icon: '✅', title: 'Your Key Strengths' },
+      { key: 'gaps', icon: '🎯', title: 'What To Work On First' },
+      { key: 'recommendation', icon: '🚀', title: 'Our Recommendation' },
+    ];
+    adviceContent.innerHTML = sectionConfig
+      .filter(s => ai.sections[s.key])
+      .map(s => `
+        <div class="advice-section">
+          <h3>${s.icon} ${s.title}</h3>
+          <p>${ai.sections[s.key]}</p>
+        </div>
+      `).join('');
+  } else {
+    adviceContent.innerHTML = `<div class="advice-section"><p class="advice-full">${ai.full_text}</p></div>`;
+  }
+
+  // Scroll to results
+  document.getElementById('step3').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetAll() {
+  CRITERIA.forEach(c => { currentRatings[c.id] = 3; });
+  showSection('step1');
+  setStep(1);
+}
+</script>
+
+<script>
+// Make step3 the results target for scrolling
+document.addEventListener('DOMContentLoaded', () => {
+  // step3 IS the results section — no extra wrapper needed
+});
+</script>
+
+</body>
+</html>
